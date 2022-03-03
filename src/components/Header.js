@@ -5,14 +5,18 @@ import {
     ShoppingCartIcon,
 } from '@heroicons/react/outline'
 import { signIn, signOut, useSession } from 'next-auth/client'
+import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
+import { selectItems } from '../slices/basketSlice'
 
 const Header = () => {
-
-    const [session] = useSession();
+    const [session] = useSession()
+    const router = useRouter()
+    const items = useSelector(selectItems)
 
     return (
         <header>
-            {/* Top Nav */}
+            {/* top nav */}
             <div className='flex items-center bg-amazon_blue p-1 flex-grow py-2'>
                 <div className='mt-2 flex items-center flex-grow sm:flex-grow-0'>
                     <Image
@@ -21,22 +25,22 @@ const Header = () => {
                         height={40}
                         objectFit='contain'
                         className='cursor-pointer'
+                        onClick={() => router.push('/')}
                     />
                 </div>
 
-                {/* Search Bar */}
+                {/* search bar */}
                 <div className='hidden sm:flex items-center h-10 rounded-md flex-grow cursor-pointer bg-yellow-400 hover:bg-yellow-500'>
                     <input
-                        placeholder='Search...'
                         className='p-2 h-full w-6 flex-grow flex-shrink rounded-l-md focus:outline-none px-4'
                         type='text'
                     />
                     <SearchIcon className='h-12 p-4' />
                 </div>
 
-                {/* Right */}
+                {/* right */}
                 <div className='text-white flex items-center text-xs space-x-6 px-4'>
-                    <div onClick={!session ? signIn : signOut} className='link'>
+                    <div className='link' onClick={!session ? signIn : signOut}>
                         <p>{session ? `Hello, ${session.user.name}` : 'Sign In'}</p>
                         <p className='font-extrabold md:text-sm'>Account & List</p>
                     </div>
@@ -44,9 +48,12 @@ const Header = () => {
                         <p>Returns</p>
                         <p className='font-extrabold md:text-sm'>& Orders</p>
                     </div>
-                    <div className='relative link flex items-center'>
+                    <div
+                        className='relative link flex items-center'
+                        onClick={() => router.push('/checkout')}
+                    >
                         <span className='absolute right-0 top-0 md:right-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold'>
-                            0
+                            {items.length}
                         </span>
                         <ShoppingCartIcon className='h-10' />
                         <p className='hidden md:inline font-extrabold md:text-sm mt-2'>
@@ -56,7 +63,7 @@ const Header = () => {
                 </div>
             </div>
 
-            {/* Bottom Nav */}
+            {/* bottom nav */}
             <div className='flex items-center space-x-3 p-2 pl-6 bg-amazon_blue-light text-white text-sm'>
                 <p className='link flex items-center'>
                     <MenuIcon className='h-6 mr-1' />
